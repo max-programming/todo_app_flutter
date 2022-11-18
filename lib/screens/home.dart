@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/screens/settings.dart';
 import 'package:todo_app/widgets/todo_item.dart';
 
 class Home extends StatefulWidget {
@@ -207,26 +208,28 @@ class _HomeState extends State<Home> {
     return AppBar(
       elevation: 0,
       backgroundColor: tdBGColor,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Icon(
-            Icons.menu,
-            color: tdBlack,
-            size: 30.0,
-          ),
-          Container(
-            height: 40,
-            width: 40,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/images/avatar.jpeg',
+      title: Text('Todo App'),
+      actions: [
+        PopupMenuButton(
+          onSelected: (result) {
+            if (result == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            }
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              value: 0,
+              child: ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
               ),
-            ),
-          ),
-        ],
-      ),
+            )
+          ],
+        )
+      ],
     );
   }
 }
