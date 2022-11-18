@@ -14,7 +14,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todosList = Todo.todoList();
+  List<Todo> _foundTodos = [];
   final _todoController = TextEditingController();
+
+  @override
+  void initState() {
+    _foundTodos = todosList;
+    super.initState();
+  }
 
   void _handleTodoChange(Todo todo) {
     setState(() {
@@ -44,6 +51,22 @@ class _HomeState extends State<Home> {
     _todoController.clear();
   }
 
+  void _runFilter(String enteredKeyword) {
+    List<Todo> results = [];
+    if (enteredKeyword.trim() == '') {
+      results = todosList;
+    } else {
+      results = todosList
+          .where((item) => item.todoText!
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+      setState(() {
+        _foundTodos = results;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +78,7 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Column(
               children: [
-                SearchBox(),
+                searchBox(),
                 Expanded(
                   child: ListView(
                     children: [
@@ -69,7 +92,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      for (Todo todo in todosList)
+                      for (Todo todo in _foundTodos)
                         TodoItem(
                           todo: todo,
                           onTodoChanged: _handleTodoChange,
@@ -138,6 +161,35 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget searchBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        cursorColor: tdBlue,
+        onChanged: (value) => _runFilter(value),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(0),
+          prefixIcon: Icon(
+            Icons.search,
+            color: tdBlack,
+            size: 20,
+          ),
+          prefixIconConstraints: BoxConstraints(
+            maxHeight: 20,
+            minWidth: 25,
+          ),
+          border: InputBorder.none,
+          hintText: 'Search',
+          hintStyle: TextStyle(color: tdGrey),
+        ),
+      ),
+    );
+  }
+
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
@@ -161,41 +213,6 @@ class _HomeState extends State<Home> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SearchBox extends StatelessWidget {
-  const SearchBox({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const TextField(
-        cursorColor: tdBlue,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(0),
-          prefixIcon: Icon(
-            Icons.search,
-            color: tdBlack,
-            size: 20,
-          ),
-          prefixIconConstraints: BoxConstraints(
-            maxHeight: 20,
-            minWidth: 25,
-          ),
-          border: InputBorder.none,
-          hintText: 'Search',
-          hintStyle: TextStyle(color: tdGrey),
-        ),
       ),
     );
   }
