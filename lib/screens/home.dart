@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/widgets/todo_item.dart';
@@ -36,7 +37,19 @@ class _HomeState extends State<Home> {
   }
 
   void _addTodoItem(String todo) {
-    if (todo.trim() == '') return;
+    if (todo.trim() == '') {
+      Fluttertoast.showToast(
+        msg: "Please enter some text",
+        toastLength: Toast.LENGTH_SHORT,
+        webShowClose: true,
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 1,
+        backgroundColor: tdRed,
+        textColor: Colors.white,
+        fontSize: 16,
+      );
+      return;
+    }
     setState(() {
       _foundTodos.add(
         Todo(
@@ -128,6 +141,9 @@ class _HomeState extends State<Home> {
                         hintText: 'Add new todo item',
                         border: InputBorder.none,
                       ),
+                      onSubmitted: (_) {
+                        _addTodoItem(_todoController.text);
+                      },
                     ),
                   ),
                 ),
