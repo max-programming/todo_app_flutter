@@ -30,18 +30,15 @@ class _HomeState extends State<Home> {
   }
 
   void _handleTodoDelete(Todo todo, String id) {
-    // setState(() {
-    //   todosList.removeWhere((element) => element.id == id);
-    // });
     setState(() {
-      todosList.remove(todo);
+      _foundTodos.remove(todo);
     });
   }
 
   void _addTodoItem(String todo) {
     if (todo.trim() == '') return;
     setState(() {
-      todosList.add(
+      _foundTodos.add(
         Todo(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           todoText: todo.trim(),
@@ -61,10 +58,10 @@ class _HomeState extends State<Home> {
               .toLowerCase()
               .contains(enteredKeyword.toLowerCase()))
           .toList();
-      setState(() {
-        _foundTodos = results;
-      });
     }
+    setState(() {
+      _foundTodos = results;
+    });
   }
 
   @override
