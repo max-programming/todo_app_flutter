@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Todo> todos = Provider.of<TodoProvider>(context).todos;
-    final _todoController = TextEditingController();
+    final todoController = TextEditingController();
 
     void addTodo(String text) {
       if (text.trim() == '') {
@@ -142,19 +142,19 @@ class HomePage extends StatelessWidget {
                     ),
                     child: TextField(
                       cursorColor: tdBlue,
-                      controller: _todoController,
+                      controller: todoController,
                       decoration: InputDecoration(
                         hintText: 'Add new todo item',
                         border: InputBorder.none,
                       ),
-                      onSubmitted: (_) => addTodo(_todoController.text),
+                      onSubmitted: (_) => addTodo(todoController.text),
                     ),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 20, right: 20),
                   child: ElevatedButton(
-                    onPressed: () => addTodo(_todoController.text),
+                    onPressed: () => addTodo(todoController.text),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: tdBlue,
                       foregroundColor: Colors.white,
