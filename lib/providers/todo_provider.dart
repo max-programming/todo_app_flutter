@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
 
 class TodoProvider extends ChangeNotifier {
