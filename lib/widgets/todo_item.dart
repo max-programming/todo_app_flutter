@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/providers/settings_provider.dart';
 
 class TodoItem extends StatelessWidget {
   final Todo todo;
@@ -16,6 +18,9 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<Setting, bool> settings =
+        Provider.of<SettingsProvider>(context).settings;
+
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: ListTile(
@@ -32,7 +37,7 @@ class TodoItem extends StatelessWidget {
         title: Text(
           todo.todoText!,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: settings[Setting.smallTextMode]! ? 16 : 22,
             color: tdBlack,
             decoration: todo.isDone ? TextDecoration.lineThrough : null,
           ),
