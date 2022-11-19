@@ -2,94 +2,80 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
+import 'package:todo_app/providers/todo_provider.dart';
 import 'package:todo_app/screens/settings.dart';
 import 'package:todo_app/widgets/todo_item.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  final todosList = Todo.todoList();
-  List<Todo> _foundTodos = [];
-  final _todoController = TextEditingController();
-
-  @override
-  void initState() {
-    _foundTodos = todosList;
-    super.initState();
-  }
-
-  void _handleTodoChange(Todo todo) {
-    setState(() {
-      todo.isDone = !todo.isDone;
-    });
-  }
-
-  void _handleTodoDelete(Todo todo, String id) {
-    setState(() {
-      _foundTodos.remove(todo);
-    });
-  }
-
-  void _addTodoItem(String todo) {
-    if (todo.trim() == '') {
-      Fluttertoast.showToast(
-        msg: "Please enter some text",
-        toastLength: Toast.LENGTH_SHORT,
-        webShowClose: true,
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 1,
-        backgroundColor: tdRed,
-        textColor: Colors.white,
-        fontSize: 16,
-      );
-      return;
-    }
-    setState(() {
-      _foundTodos.add(
-        Todo(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          todoText: todo.trim(),
-        ),
-      );
-    });
-    _todoController.clear();
-  }
-
-  void _runFilter(String enteredKeyword) {
-    List<Todo> results = [];
-    if (enteredKeyword.trim() == '') {
-      results = todosList;
-    } else {
-      results = todosList
-          .where((item) => item.todoText!
-              .toLowerCase()
-              .contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
-    setState(() {
-      _foundTodos = results;
-    });
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<Todo> todos = Provider.of<TodoProvider>(context).todos;
+    final _todoController = TextEditingController();
+
+    void addTodo(String text) {
+      if (text.trim() == '') {
+        Fluttertoast.showToast(
+          msg: "Please enter some text",
+          toastLength: Toast.LENGTH_SHORT,
+          webShowClose: true,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: tdRed,
+          textColor: Colors.white,
+          fontSize: 16,
+        );
+        return;
+      }
+      Provider.of<TodoProvider>(context, listen: false).addTodo(text);
+    }
+
+    void deleteTodo(Todo todo) {
+      Provider.of<TodoProvider>(context, listen: false).deleteTodo(todo);
+    }
+
+    void markTodo(Todo todo) {
+      Provider.of<TodoProvider>(context, listen: false).markTodo(todo);
+    }
+
     return Scaffold(
       backgroundColor: tdBGColor,
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: tdBGColor,
+        title: Text('Todo App'),
+        actions: [
+          PopupMenuButton(
+            onSelected: (result) {
+              if (result == 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: 0,
+                child: ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Settings'),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
       body: Stack(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             child: Column(
               children: [
-                searchBox(),
                 Expanded(
                   child: ListView(
                     children: [
@@ -103,11 +89,11 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      for (Todo todo in _foundTodos)
+                      for (Todo todo in todos)
                         TodoItem(
                           todo: todo,
-                          onTodoChanged: _handleTodoChange,
-                          onDeleteChanged: _handleTodoDelete,
+                          onTodoChanged: () => markTodo(todo),
+                          onDeleteChanged: () => deleteTodo(todo),
                         ),
                     ],
                   ),
@@ -142,18 +128,14 @@ class _HomeState extends State<Home> {
                         hintText: 'Add new todo item',
                         border: InputBorder.none,
                       ),
-                      onSubmitted: (_) {
-                        _addTodoItem(_todoController.text);
-                      },
+                      onSubmitted: (_) => addTodo(_todoController.text),
                     ),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 20, right: 20),
                   child: ElevatedButton(
-                    onPressed: () {
-                      _addTodoItem(_todoController.text);
-                    },
+                    onPressed: () => addTodo(_todoController.text),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: tdBlue,
                       foregroundColor: Colors.white,
@@ -172,64 +154,6 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget searchBox() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: TextField(
-        cursorColor: tdBlue,
-        onChanged: (value) => _runFilter(value),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(0),
-          prefixIcon: Icon(
-            Icons.search,
-            color: tdBlack,
-            size: 20,
-          ),
-          prefixIconConstraints: BoxConstraints(
-            maxHeight: 20,
-            minWidth: 25,
-          ),
-          border: InputBorder.none,
-          hintText: 'Search',
-          hintStyle: TextStyle(color: tdGrey),
-        ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: tdBGColor,
-      title: Text('Todo App'),
-      actions: [
-        PopupMenuButton(
-          onSelected: (result) {
-            if (result == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            }
-          },
-          itemBuilder: (BuildContext context) => [
-            PopupMenuItem(
-              value: 0,
-              child: ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-              ),
-            )
-          ],
-        )
-      ],
     );
   }
 }
