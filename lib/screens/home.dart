@@ -42,6 +42,10 @@ class HomePage extends StatelessWidget {
       Provider.of<TodoProvider>(context, listen: false).markTodo(todo);
     }
 
+    void deleteAll() {
+      Provider.of<TodoProvider>(context, listen: false).deleteAllTodos();
+    }
+
     return Scaffold(
       backgroundColor: tdBGColor,
       appBar: AppBar(
@@ -56,14 +60,29 @@ class HomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(builder: (context) => SettingsPage()),
                 );
+              } else if (result == 1) {
+                deleteAll();
               }
             },
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(
                 value: 0,
                 child: ListTile(
-                  leading: Icon(Icons.settings),
+                  leading: Icon(Icons.settings_outlined),
                   title: Text('Settings'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: ListTile(
+                  leading: Icon(
+                    Icons.delete_sweep_outlined,
+                    color: tdRed,
+                  ),
+                  title: Text(
+                    'Delete all',
+                    style: TextStyle(color: tdRed),
+                  ),
                 ),
               )
             ],

@@ -25,4 +25,9 @@ class TodoProvider extends ChangeNotifier {
     todo.isDone = !todo.isDone;
     notifyListeners();
   }
+
+  void deleteAllTodos() {
+    todos.clear();
+    notifyListeners();
+  }
 }
