@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
+import 'package:todo_app/providers/settings_provider.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool smallTextMode = false;
-
-  @override
   Widget build(BuildContext context) {
+    Map<Setting, bool> settings =
+        Provider.of<SettingsProvider>(context).settings;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -25,11 +23,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ListTile(
               title: Text("Small text mode"),
               trailing: Switch(
-                value: smallTextMode,
+                value: settings[Setting.smallTextMode]!,
                 onChanged: (value) {
-                  setState(() {
-                    smallTextMode = value;
-                  });
+                  Provider.of<SettingsProvider>(context, listen: false)
+                      .changeSetting(Setting.smallTextMode, value);
                 },
               ),
             ),
