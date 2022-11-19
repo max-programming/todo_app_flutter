@@ -23,6 +23,7 @@ class SettingsPage extends StatelessWidget {
             ListTile(
               title: Text("Small text mode"),
               trailing: Switch(
+                activeColor: tdBlue,
                 value: settings[Setting.smallTextMode]!,
                 onChanged: (value) {
                   Provider.of<SettingsProvider>(context, listen: false)
