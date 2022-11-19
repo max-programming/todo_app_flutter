@@ -54,13 +54,16 @@ class TodoItem extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => DeleteConfirmation(
-                  confirmDelete: onDeleteChanged,
-                ),
-              );
-              // onDeleteChanged();
+              if (settings[Setting.disableDeleteConfirmation]!) {
+                onDeleteChanged();
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => DeleteConfirmation(
+                    confirmDelete: onDeleteChanged,
+                  ),
+                );
+              }
             },
             color: Colors.white,
             iconSize: 18,
