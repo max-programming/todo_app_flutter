@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:todo_app/model/todo.dart';
 import 'package:todo_app/providers/settings_provider.dart';
+import 'package:todo_app/widgets/delete_confirmation.dart';
 
 class TodoItem extends StatelessWidget {
   final Todo todo;
@@ -52,7 +53,15 @@ class TodoItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
           child: IconButton(
-            onPressed: onDeleteChanged,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => DeleteConfirmation(
+                  confirmDelete: onDeleteChanged,
+                ),
+              );
+              // onDeleteChanged();
+            },
             color: Colors.white,
             iconSize: 18,
             icon: Icon(Icons.delete),
