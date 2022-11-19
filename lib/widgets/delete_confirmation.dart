@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/constants/colors.dart';
 
 class DeleteConfirmation extends StatelessWidget {
   final confirmDelete;
@@ -14,7 +15,10 @@ class DeleteConfirmation extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('NO'),
+          child: const Text(
+            'NO',
+            style: TextStyle(color: tdBlue),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -23,7 +27,7 @@ class DeleteConfirmation extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: tdBlue,
           ),
           child: const Text('YES'),
         ),
